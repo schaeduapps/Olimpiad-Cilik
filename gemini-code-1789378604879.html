@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AMANDA'S GENIUS MATH - K-pop Math Learning</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brandPink: '#ff2a85',
+            brandHotPink: '#ff007f',
+            brandPurple: '#7b2cbf',
+            brandLavender: '#e0aaff',
+            brandMagenta: '#d90429',
+            brandSoftBlue: '#4cc9f0',
+            brandDarkPurple: '#240046',
+            brandDarkBg: '#10002b'
+          },
+          animation: {
+            'bounce-slow': 'bounce 2s infinite',
+            'pulse-fast': 'pulse 1s infinite',
+            'float': 'float 4s ease-in-out infinite',
+            'glow': 'glow 2s ease-in-out infinite alternate',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-12px)' },
+            },
+            glow: {
+              '0%': { filter: 'drop-shadow(0 0 5px rgba(255, 42, 133, 0.6))' },
+              '100%': { filter: 'drop-shadow(0 0 20px rgba(123, 44, 191, 0.9))' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Outfit:wght@400;600;800&display=swap');
+    body {
+      font-family: 'Fredoka', sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .font-outfit {
+      font-family: 'Outfit', sans-serif;
+    }
+    /* Custom Neon Glow & Shadows */
+    .neon-text {
+      text-shadow: 0 0 10px #ff2a85, 0 0 20px #7b2cbf, 0 0 30px #d90429;
+    }
+    .neon-box {
+      box-shadow: 0 0 15px rgba(255, 42, 133, 0.4), inset 0 0 15px rgba(123, 44, 191, 0.3);
+    }
+    /* Star background effect */
+    .bg-stars {
+      background-image: radial-gradient(2px 2px at 20px 30px, #fff, rgba(0,0,0,0)),
+                        radial-gradient(2px 2px at 40px 70px, #e0aaff, rgba(0,0,0,0)),
+                        radial-gradient(1.5px 1.5px at 90px 40px, #ff2a85, rgba(0,0,0,0)),
+                        radial-gradient(2px 2px at 160px 120px, #fff, rgba(0,0,0,0));
+      background-repeat: repeat;
+      background-size: 200px 200px;
+    }
+  </style>
+</head>
+<body class="bg-brandDarkBg text-white min-h-screen flex flex-col justify-between overflow-x-hidden bg-stars relative">
+
+  <!-- BACKGROUND FLOATING DECORATIONS -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+    <div class="absolute top-10 left-10 text-brandPink text-2xl animate-float opacity-30"><i class="fa-solid fa-star"></i></div>
+    <div class="absolute top-1/4 right-12 text-brandLavender text-3xl animate-float opacity-40" style="animation-delay: 1s;"><i class="fa-solid fa-music"></i></div>
+    <div class="absolute bottom-20 left-16 text-brandSoftBlue text-2xl animate-float opacity-30" style="animation-delay: 2s;"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+    <div class="absolute bottom-10 right-20 text-brandHotPink text-3xl animate-float opacity-40" style="animation-delay: 1.5s;"><i class="fa-solid fa-heart"></i></div>
+  </div>
+
+  <!-- TOP BAR / HEADER -->
+  <header class="relative z-10 w-full p-4 flex justify-between items-center bg-brandDarkPurple/80 backdrop-blur-md border-b border-brandPink/30">
+    <div class="flex items-center gap-3 cursor-pointer" onclick="window.app && window.app.navigateHome()">
+      <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-brandPink to-brandPurple flex items-center justify-center font-bold text-xl shadow-lg border border-white/40">
+        👑
+      </div>
+      <div>
+        <h1 class="text-lg font-extrabold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-pink-300 via-purple-300 to-indigo-300">
+          AMANDA'S GENIUS MATH
+        </h1>
+        <p class="text-[10px] text-brandLavender font-outfit uppercase tracking-widest hidden sm:block">Demon Hunter Math Squad</p>
+      </div>
+    </div>
+
+    <!-- AUDIO CONTROLS & USER MENU -->
+    <div class="flex items-center gap-2">
+      <button id="bgm-toggle-btn" onclick="audioSystem.toggleBGM()" class="px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-xs flex items-center gap-1.5 border border-white/20 transition">
+        <i id="bgm-icon" class="fa-solid fa-music text-pink-400"></i>
+        <span id="bgm-status-text" class="hidden sm:inline">BGM: OFF</span>
+      </button>
+
+      <button id="sfx-toggle-btn" onclick="audioSystem.toggleSFX()" class="px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-xs flex items-center gap-1.5 border border-white/20 transition">
+        <i id="sfx-icon" class="fa-solid fa-volume-high text-brandSoftBlue"></i>
+        <span id="sfx-status-text" class="hidden sm:inline">SFX: ON</span>
+      </button>
+
+      <div id="header-user-badge" class="hidden flex items-center gap-2 ml-2 pl-2 border-l border-white/20">
+        <button onclick="window.app && window.app.showParentSettings()" class="w-8 h-8 rounded-full bg-purple-600 border border-pink-400 flex items-center justify-center text-xs font-bold hover:scale-105 transition" title="Parent Settings">
+          ⚙️
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN APP CONTAINER -->
+  <main id="app-viewport" class="relative z-10 flex-1 max-w-5xl w-full mx-auto p-4 flex flex-col justify-center items-center">
+    <!-- Dynamic Screens Loaded Here -->
+    <div id="screen-container" class="w-full flex justify-center">
+      <div class="text-center p-8">
+        <div class="inline-block animate-spin text-4xl mb-2">🌸</div>
+        <p class="text-sm font-bold text-pink-300">Loading Amanda's Genius Math...</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="relative z-10 w-full py-3 text-center text-xs text-purple-300/60 bg-brandDarkBg/80 backdrop-blur-sm border-t border-purple-900/40">
+    <p>AMANDA'S GENIUS MATH &bull; K-Pop Supernatural Demon Hunter Edition &bull; 2026</p>
+  </footer>
+
+  <!-- MODAL / CELEBRATION OVERLAY -->
+  <div id="milestone-modal" class="fixed inset-0 bg-black/80 backdrop-blur-lg z-50 hidden flex flex-col items-center justify-center p-4">
+    <div class="bg-gradient-to-b from-brandPurple to-brandDarkBg p-8 rounded-3xl border-2 border-brandPink max-w-md w-full text-center shadow-2xl animate-glow">
+      <div id="modal-badge-icon" class="text-6xl mb-4 animate-bounce">🏆</div>
+      <h2 id="modal-title" class="text-3xl font-black text-pink-300 neon-text mb-2">VERY GENIUS KIDS!</h2>
+      <p id="modal-subtitle" class="text-purple-200 mb-6 font-outfit">You completed 50 correct questions!</p>
+      
+      <div id="modal-character" class="my-4 text-5xl">💃🏻 ✨ 🎤</div>
+      
+      <button onclick="window.app && window.app.closeMilestoneModal()" class="w-full py-4 bg-gradient-to-r from-brandPink to-purple-600 rounded-2xl font-bold text-lg text-white shadow-lg hover:brightness-110 active:scale-95 transition">
+        CONTINUE LEARNING ✨
+      </button>
+    </div>
+  </div>
+
+  <!-- AUDIO ENGINE (Web Audio API Synthesizer) -->
+  <script>
+    class WebAudioEngine {
+      constructor() {
+        this.ctx = null;
+        this.bgmEnabled = false;
+        this.sfxEnabled = true;
+        this.bgmInterval = null;
+        this.bgmStep = 0;
+      }
+
+      initCtx() {
+        if (!this.ctx) {
+          this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      toggleBGM() {
+        this.initCtx();
+        this.bgmEnabled = !this.bgmEnabled;
+        const icon = document.getElementById('bgm-icon');
+        const text = document.getElementById('bgm-status-text');
+        
+        if (this.bgmEnabled) {
+          text.innerText = "BGM: ON";
+          icon.classList.remove('text-pink-400');
+          icon.classList.add('text-green-400', 'animate-spin');
+          this.startKpopBGM();
+        } else {
+          text.innerText = "BGM: OFF";
+          icon.classList.remove('text-green-400', 'animate-spin');
+          icon.classList.add('text-pink-400');
+          this.stopKpopBGM();
+        }
+      }
+
+      toggleSFX() {
+        this.initCtx();
+        this.sfxEnabled = !this.sfxEnabled;
+        const text = document.getElementById('sfx-status-text');
+        text.innerText = this.sfxEnabled ? "SFX: ON" : "SFX: OFF";
+      }
+
+      startKpopBGM() {
+        if (this.bgmInterval) clearInterval(this.bgmInterval);
+        const notes = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25];
+        this.bgmStep = 0;
+        
+        this.bgmInterval = setInterval(() => {
+          if (!this.bgmEnabled || !this.ctx) return;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = this.bgmStep % 4 === 0 ? 'triangle' : 'sine';
+          
+          const freq = notes[(this.bgmStep * 3 + (this.bgmStep % 2)) % notes.length];
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+          
+          gain.gain.setValueAtTime(0.03, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.18);
+          
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.2);
+          
+          this.bgmStep = (this.bgmStep + 1) % 16;
+        }, 220);
+      }
+
+      stopKpopBGM() {
+        if (this.bgmInterval) {
+          clearInterval(this.bgmInterval);
+          this.bgmInterval = null;
+        }
+      }
+
+      playCorrect() {
+        if (!this.sfxEnabled) return;
+        this.initCtx();
+        const now = this.ctx.currentTime;
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((freq, i) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now + i * 0.08);
+          gain.gain.setValueAtTime(0.15, now + i * 0.08);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.2);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now + i * 0.08);
+          osc.stop(now + i * 0.08 + 0.25);
+        });
+      }
+
+      playWrong() {
+        if (!this.sfxEnabled) return;
+        this.initCtx();
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(150, now);
+        osc.frequency.exponentialRampToValueAtTime(80, now + 0.3);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.35);
+      }
+
+      playMilestoneSound() {
+        if (!this.sfxEnabled) return;
+        this.initCtx();
+        const now = this.ctx.currentTime;
+        [440, 554.37, 659.25, 880].forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.1);
+          gain.gain.setValueAtTime(0.2, now + idx * 0.1);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.1 + 0.4);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now + idx * 0.1);
+          osc.stop(now + idx * 0.1 + 0.45);
+        });
+      }
+    }
+
+    const audioSystem = new WebAudioEngine();
+  </script>
+
+  <!-- FIREBASE & MAIN APP SCRIPT (ES MODULE) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { 
+      getAuth, 
+      createUserWithEmailAndPassword, 
+      signInWithEmailAndPassword, 
+      signOut, 
+      onAuthStateChanged 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { 
+      getDatabase, 
+      ref, 
+      set, 
+      get, 
+      child, 
+      update 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCr8laKC_oKD9XD3CaoWiLxiBT2wVc956E",
+      authDomain: "geniusmath-664c3.firebaseapp.com",
+      databaseURL: "https://geniusmath-664c3-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "geniusmath-664c3",
+      storageBucket: "geniusmath-664c3.firebasestorage.app",
+      messagingSenderId: "729156471099",
+      appId: "1:729156471099:web:5b3a84dc25a803a3260f1e"
+    };
+
+    // Initialize Firebase
+    const fbApp = initializeApp(firebaseConfig);
+    const auth = getAuth(fbApp);
+    const db = getDatabase(fbApp);
+
+    window.FB = { auth, db, ref, set, get, child, update, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut };
+
+    const CHARACTERS = [
+      { id: 'rumi', name: 'Rumi', role: 'Vocal Hunter', emoji: '👧🏻⚡', color: 'from-pink-500 to-rose-400', trait: 'Electric Blade' },
+      { id: 'mira', name: 'Mira', role: 'Dance Slayer', emoji: '👩🏻‍🎤🔮', color: 'from-purple-500 to-indigo-500', trait: 'Spiritual Orb' },
+      { id: 'zoey', name: 'Zoey', role: 'Rap Guardian', emoji: '👧🏽✨', color: 'from-blue-400 to-teal-400', trait: 'Light Shield' },
+      { id: 'sajapop', name: 'Saja Pop', role: 'Demon Mascot', emoji: '🦊👑', color: 'from-amber-400 to-pink-500', trait: 'Fire Magic' }
+    ];
+
+    class AmandaMathApp {
+      constructor() {
+        this.currentUser = null;
+        this.childrenProfiles = [];
+        this.activeChild = null;
+        this.currentLevel = 'EASY';
+        this.currentMode = 'ADDITION';
+        this.currentQuestion = null;
+        this.askedQuestionIds = new Set();
+        this.score = { correct: 0, wrong: 0, streak: 0 };
+        this.currentInput = '';
+        this.isProcessingAnswer = false;
+        this.DEFAULT_PIN = "1234";
+      }
+
+      init() {
+        this.bindAuthListener();
+      }
+
+      bindAuthListener() {
+        onAuthStateChanged(auth, async (user) => {
+          if (user) {
+            this.currentUser = user;
+            document.getElementById('header-user-badge').classList.remove('hidden');
+            
+            const isDeviceAuth = localStorage.getItem(`auth_device_${user.uid}`);
+            if (isDeviceAuth) {
+              this.showPinScreen();
+            } else {
+              localStorage.setItem(`auth_device_${user.uid}`, 'true');
+              await this.loadParentData();
+              this.showParentDashboard();
+            }
+          } else {
+            this.currentUser = null;
+            document.getElementById('header-user-badge').classList.add('hidden');
+            this.showWelcomeScreen();
+          }
+        });
+      }
+
+      navigateHome() {
+        if (this.activeChild) {
+          this.showChildHome();
+        } else if (this.currentUser) {
+          this.showParentDashboard();
+        } else {
+          this.showWelcomeScreen();
+        }
+      }
+
+      render(html) {
+        document.getElementById('screen-container').innerHTML = html;
+      }
+
+      showWelcomeScreen() {
+        const html = `
+          <div class="text-center max-w-xl w-full p-6 animate-float">
+            <div class="inline-block p-4 rounded-full bg-gradient-to-tr from-brandPink/30 to-brandPurple/30 border border-brandPink/50 mb-4 shadow-2xl">
+              <span class="text-6xl sm:text-7xl">🎤✨⚔️</span>
+            </div>
+            <h1 class="text-4xl sm:text-5xl font-black tracking-tight text-white mb-2 neon-text">
+              AMANDA'S GENIUS MATH
+            </h1>
+            <p class="text-lg sm:text-xl font-bold text-pink-300 mb-6 font-outfit">
+              Fun • Play • Learn • Become a Math Genius!
+            </p>
+
+            <div class="grid grid-cols-4 gap-2 mb-8 max-w-md mx-auto">
+              ${CHARACTERS.map(c => `
+                <div class="bg-white/10 backdrop-blur-md p-2 rounded-2xl border border-white/20 flex flex-col items-center animate-pulse-fast">
+                  <span class="text-3xl mb-1">${c.emoji}</span>
+                  <span class="text-[10px] font-bold text-pink-200">${c.name}</span>
+                </div>
+              `).join('')}
+            </div>
+
+            <div class="flex flex-col gap-3 max-w-xs mx-auto">
+              <button onclick="window.app.showLoginScreen()" class="w-full py-4 rounded-2xl bg-gradient-to-r from-brandPink via-purple-600 to-brandHotPink font-extrabold text-xl shadow-xl hover:scale-105 active:scale-95 transition flex items-center justify-center gap-2">
+                🎮 START LEARNING
+              </button>
+              <div class="flex gap-2">
+                <button onclick="window.app.showSignUpScreen()" class="flex-1 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-pink-400/40 font-bold text-sm">
+                  SIGN UP
+                </button>
+                <button onclick="window.app.showLoginScreen()" class="flex-1 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-purple-400/40 font-bold text-sm">
+                  LOG IN
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        this.render(html);
+      }
+
+      showSignUpScreen() {
+        const html = `
+          <div class="max-w-md w-full bg-brandDarkPurple/90 border border-pink-500/30 p-8 rounded-3xl shadow-2xl">
+            <h2 class="text-2xl font-black text-pink-300 mb-1 text-center">CREATE PARENT ACCOUNT</h2>
+            <p class="text-xs text-purple-200 text-center mb-6">Parent authentication for progress tracking & quick access PIN.</p>
+            
+            <form onsubmit="window.app.handleSignUp(event)" class="space-y-4">
+              <div>
+                <label class="block text-xs font-bold text-purple-300 mb-1">PARENT NAME</label>
+                <input type="text" id="signup-name" required class="w-full px-4 py-3 rounded-xl bg-black/40 border border-pink-500/40 text-white focus:outline-none focus:border-pink-400" placeholder="e.g. Sarah Amanda">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-purple-300 mb-1">EMAIL</label>
+                <input type="email" id="signup-email" required class="w-full px-4 py-3 rounded-xl bg-black/40 border border-pink-500/40 text-white focus:outline-none focus:border-pink-400" placeholder="parent@example.com">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-purple-300 mb-1">PASSWORD</label>
+                <input type="password" id="signup-pass" required minlength="6" class="w-full px-4 py-3 rounded-xl bg-black/40 border border-pink-500/40 text-white focus:outline-none focus:border-pink-400" placeholder="••••••••">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-purple-300 mb-1">CONFIRM PASSWORD</label>
+                <input type="password" id="signup-confirm-pass" required class="w-full px-4 py-3 rounded-xl bg-black/40 border border-pink-500/40 text-white focus:outline-none focus:border-pink-400" placeholder="••••••••">
+              </div>
+
+              <div id="signup-error" class="text-red-400 text-xs font-bold text-center hidden"></div>
+
+              <button type="submit" class="w-full py-4 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 font-bold text-lg shadow-lg hover:brightness-110 transition">
+                CREATE ACCOUNT ✨
+              </button>
+            </form>
+            <div class="mt-4 text-center">
+              <button onclick="window.app.showLoginScreen()" class="text-xs text-pink-300 underline">Already have an account? Log In</button>
+            </div>
+          </div>
+        `;
+        this.render(html);
+      }
+
+      async handleSignUp(e) {
+        e.preventDefault();
+        const name = document.getElementById('signup-name').value.trim();
+        const email = document.getElementById('signup-email').value.trim();
+        const pass = document.getElementById('signup-pass').value;
+        const confirmPass = document.getElementById('signup-confirm-pass').value;
+        const errDiv = document.getElementById('signup-error');
+
+        if (pass !== confirmPass) {
+          errDiv.innerText = "Kata laluan tidak sepadan!";
+          errDiv.classList.remove('hidden');
+          return;
+        }
+
+        try {
+          const userCred = await createUserWithEmailAndPassword(auth, email, pass);
+          const user = userCred.user;
+          
+          await set(ref(db, `parents/${user.uid}/profile`), {
+            parentId: user.uid,
+            name: name,
+            email: email,
+            pin: this.DEFAULT_PIN,
+            createdAt: new Date().toISOString()
+          });
+
+          localStorage.setItem(`auth_device_${user.uid}`, 'true');
+          await this.loadParentData();
+          this.showParentDashboard();
+        } catch (err) {
+          errDiv.innerText = err.message || "Ralat pendaftaran berlaku.";
+          errDiv.classList.remove('hidden');
+        }
+      }
+
+      showLoginScreen() {
+        const html = `
+          <div class="max-w-md w-full bg-brandDarkPurple/90 border border-purple-500/30 p-8 rounded-3xl shadow-2xl">
+            <h2 class="text-2xl font-black text-pink-300 mb-1 text-center">PARENT LOGIN</h2>
+            <p class="text-xs text-purple-200 text-center mb-6">Enter your email and password to access dashboard.</p>
+            
+            <form onsubmit="window.app.handleLogin(event)" class="space-y-4">
+              <div>
+                <label class="block text-xs font-bold text-purple-300 mb-1">EMAIL</label>
+                <input type="email" id="login-email" required class="w-full px-4 py-3 rounded-xl bg-black/40 border border-purple-500/40 text-white focus:outline-none focus:border-pink-400">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-purple-300 mb-1">PASSWORD</label>
+                <input type="password" id="login-pass" required class="w-full px-4 py-3 rounded-xl bg-black/40 border border-purple-500/40 text-white focus:outline-none focus:border-pink-400">
+              </div>
+
+              <div id="login-error" class="text-red-400 text-xs font-bold text-center hidden"></div>
+
+              <button type="submit" class="w-full py-4 rounded-xl bg-gradient-to-r from-purple-600 to-pink-500 font-bold text-lg shadow-lg hover:brightness-110 transition">
+                LOGIN 🚀
+              </button>
+            </form>
+            <div class="mt-4 text-center flex justify-between text-xs text-purple-300">
+              <button onclick="window.app.showSignUpScreen()" class="underline">Create Account</button>
+              <button onclick="alert('Jika terlupa kata laluan, sila hubungi pentadbir Firebase anda.')" class="underline">Forgot Password?</button>
+            </div>
+          </div>
+        `;
+        this.render(html);
+      }
+
+      async handleLogin(e) {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value.trim();
+        const pass = document.getElementById('login-pass').value;
+        const errDiv = document.getElementById('login-error');
+
+        try {
+          const userCred = await signInWithEmailAndPassword(auth, email, pass);
+          localStorage.setItem(`auth_device_${userCred.user.uid}`, 'true');
+          await this.loadParentData();
+          this.showParentDashboard();
+        } catch (err) {
+          errDiv.innerText = "Email atau password tidak betul!";
+          errDiv.classList.remove('hidden');
+        }
+      }
+
+      showPinScreen() {
+        const html = `
+          <div class="max-w-xs w-full bg-brandDarkPurple/90 border border-pink-500/40 p-6 rounded-3xl text-center shadow-2xl">
+            <span class="text-4xl">💖</span>
+            <h2 class="text-2xl font-black text-pink-300 mt-2 mb-1">WELCOME BACK!</h2>
+            <p class="text-xs text-purple-200 mb-4">Enter Parent Quick Access PIN</p>
+            
+            <div class="flex justify-center gap-2 mb-6">
+              <input type="password" maxlength="1" id="pin-1" class="w-12 h-14 text-center text-2xl font-bold bg-black/60 border-2 border-pink-400 rounded-xl focus:outline-none focus:border-white" autofocus onkeyup="window.app.focusNextPin(this, 'pin-2')">
+              <input type="password" maxlength="1" id="pin-2" class="w-12 h-14 text-center text-2xl font-bold bg-black/60 border-2 border-pink-400 rounded-xl focus:outline-none focus:border-white" onkeyup="window.app.focusNextPin(this, 'pin-3')">
+              <input type="password" maxlength="1" id="pin-3" class="w-12 h-14 text-center text-2xl font-bold bg-black/60 border-2 border-pink-400 rounded-xl focus:outline-none focus:border-white" onkeyup="window.app.focusNextPin(this, 'pin-4')">
+              <input type="password" maxlength="1" id="pin-4" class="w-12 h-14 text-center text-2xl font-bold bg-black/60 border-2 border-pink-400 rounded-xl focus:outline-none focus:border-white" onkeyup="window.app.verifyPin()">
+            </div>
+
+            <p class="text-[11px] text-purple-300/70 mb-4">Default PIN: <span class="font-bold text-pink-300">1234</span> (For parent quick access)</p>
+            
+            <div id="pin-error" class="text-red-400 text-xs font-bold mb-3 hidden">Incorrect PIN. Try again.</div>
+
+            <button onclick="window.app.verifyPin()" class="w-full py-3 bg-pink-600 rounded-xl font-bold text-sm hover:bg-pink-500 transition">
+              CONTINUE 🌸
+            </button>
+
+            <button onclick="window.app.logoutParent()" class="mt-4 text-xs text-purple-400 underline block mx-auto">
+              Switch Account / Log Out
+            </button>
+          </div>
+        `;
+        this.render(html);
+      }
+
+      focusNextPin(el, nextId) {
+        if (el.value.length === 1 && nextId) {
+          document.getElementById(nextId).focus();
+        }
+      }
+
+      async verifyPin() {
+        const p1 = document.getElementById('pin-1').value;
+        const p2 = document.getElementById('pin-2').value;
+        const p3 = document.getElementById('pin-3').value;
+        const p4 = document.getElementById('pin-4').value;
+        const enteredPin = p1 + p2 + p3 + p4;
+
+        await this.loadParentData();
+        const storedPin = (this.parentProfile && this.parentProfile.pin) ? this.parentProfile.pin : this.DEFAULT_PIN;
+
+        if (enteredPin === storedPin) {
+          this.showParentDashboard();
+        } else {
+          document.getElementById('pin-error').classList.remove('hidden');
+          audioSystem.playWrong();
+        }
+      }
+
+      async loadParentData() {
+        if (!this.currentUser) return;
+        try {
+          const snapshot = await get(child(ref(db), `parents/${this.currentUser.uid}`));
+          if (snapshot.exists()) {
+            const data = snapshot.val();
+            this.parentProfile = data.profile || {};
+            this.childrenProfiles = data.children ? Object.values(data.children) : [];
+          } else {
+            this.childrenProfiles = [];
+          }
+        } catch (err) {
+          console.error("Data load error:", err);
+        }
+      }
+
+      showParentDashboard() {
+        const parentName = (this.parentProfile && this.parentProfile.name) ? this.parentProfile.name : 'Parent';
+        
+        const html = `
+          <div class="w-full max-w-4xl">
+            <div class="flex justify-between items-center mb-6">
+              <div>
+                <h2 class="text-3xl font-black text-pink-300 neon-text">Welcome, ${parentName}! 🌸</h2>
+                <p class="text-sm text-purple-200">Select a child profile to start learning Math</p>
+              </div>
+              <button onclick="window.app.showAddChildModal()" class="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 rounded-xl font-bold text-sm shadow-lg hover:scale-105 transition">
+                + ADD CHILD
+              </button>
+            </div>
+
+            ${this.childrenProfiles.length === 0 ? `
+              <div class="bg-brandDarkPurple/60 border-2 border-dashed border-pink-400/40 p-12 rounded-3xl text-center">
+                <span class="text-5xl">👑</span>
+                <h3 class="text-xl font-bold text-white mt-3">Let's create your first Math Genius! 🌟</h3>
+                <p class="text-xs text-purple-300 my-2">Add your child to begin single & multi-digit math practice.</p>
+                <button onclick="window.app.showAddChildModal()" class="mt-4 px-6 py-3 bg-pink-500 rounded-xl font-bold text-sm">
+                  + ADD CHILD NOW
+                </button>
+              </div>
+            ` : `
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                ${this.childrenProfiles.map(child => `
+                  <div class="bg-gradient-to-b from-purple-900/60 to-brandDarkPurple border border-pink-500/30 rounded-3xl p-5 hover:border-pink-400 transition shadow-xl relative group">
+                    <div class="flex items-center gap-4">
+                      <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr ${CHARACTERS.find(c=>c.id===child.avatar)?.color || 'from-pink-500 to-purple-500'} flex items-center justify-center text-3xl shadow-md">
+                        ${CHARACTERS.find(c=>c.id===child.avatar)?.emoji || '🌸'}
+                      </div>
+                      <div>
+                        <h4 class="text-xl font-black text-white">${child.name}</h4>
+                        <p class="text-xs text-pink-300 font-bold">⭐ ${child.totalCorrect || 0} Correct Answers</p>
+                        <p class="text-[10px] text-purple-300">Accuracy: ${child.totalQuestions ? Math.round((child.totalCorrect/child.totalQuestions)*100) : 0}%</p>
+                      </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t border-purple-800/50 flex justify-between items-center">
+                      <button onclick="window.app.showParentProgress('${child.childId}')" class="text-xs text-brandSoftBlue hover:underline font-bold">
+                        📊 Progress
+                      </button>
+                      <button onclick="window.app.selectChild('${child.childId}')" class="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 rounded-xl font-bold text-xs shadow hover:scale-105 transition">
+                        PLAY MATH 🎮
+                      </button>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            `}
+          </div>
+        `;
+        this.render(html);
+      }
+
+      showAddChildModal() {
+        const html = `
+          <div class="max-w-md w-full bg-brandDarkPurple border border-pink-500/40 p-6 rounded-3xl shadow-2xl">
+            <h3 class="text-2xl font-black text-pink-300 text-center mb-4">ADD CHILD PROFILE 🌟</h3>
+            
+            <form onsubmit="window.app.handleAddChild(event)" class="space-y-4">
+              <div>
+                <label class="block text-xs font-bold text-purple-300 mb-1">CHILD NAME</label>
+                <input type="text" id="child-name" required class="w-full px-4 py-3 rounded-xl bg-black/50 border border-pink-500/40 text-white focus:outline-none" placeholder="e.g. Amanda">
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-purple-300 mb-2">CHOOSE DEMON HUNTER AVATAR</label>
+                <div class="grid grid-cols-2 gap-2">
+                  ${CHARACTERS.map(c => `
+                    <label class="cursor-pointer border border-purple-500/40 rounded-2xl p-3 flex items-center gap-3 hover:bg-purple-800/40">
+                      <input type="radio" name="child-avatar" value="${c.id}" required class="accent-pink-500">
+                      <span class="text-2xl">${c.emoji}</span>
+                      <span class="text-xs font-bold text-white">${c.name}</span>
+                    </label>
+                  `).join('')}
+                </div>
+              </div>
+
+              <div class="flex gap-2 pt-2">
+                <button type="button" onclick="window.app.showParentDashboard()" class="flex-1 py-3 bg-white/10 rounded-xl font-bold text-xs">CANCEL</button>
+                <button type="submit" class="flex-1 py-3 bg-gradient-to-r from-pink-500 to-purple-600 rounded-xl font-bold text-xs">SAVE PROFILE</button>
+              </div>
+            </form>
+          </div>
+        `;
+        this.render(html);
+      }
+
+      async handleAddChild(e) {
+        e.preventDefault();
+        const name = document.getElementById('child-name').value.trim();
+        const avatar = document.querySelector('input[name="child-avatar"]:checked')?.value || 'rumi';
+        
+        const childId = 'child_' + Date.now();
+        const childData = {
+          childId,
+          parentId: this.currentUser.uid,
+          name,
+          avatar,
+          totalCorrect: 0,
+          totalWrong: 0,
+          totalQuestions: 0,
+          currentStreak: 0,
+          bestStreak: 0,
+          createdAt: new Date().toISOString()
+        };
+
+        await set(ref(db, `parents/${this.currentUser.uid}/children/${childId}`), childData);
+        await this.loadParentData();
+        this.showParentDashboard();
+      }
+
+      selectChild(childId) {
+        this.activeChild = this.childrenProfiles.find(c => c.childId === childId);
+        this.showChildHome();
+      }
+
+      showChildHome() {
+        if (!this.activeChild) return this.showParentDashboard();
+
+        const avatarObj = CHARACTERS.find(c => c.id === this.activeChild.avatar) || CHARACTERS[0];
+
+        const html = `
+          <div class="w-full max-w-3xl text-center">
+            <div class="inline-block p-4 rounded-3xl bg-gradient-to-r ${avatarObj.color} mb-4 shadow-xl animate-float">
+              <span class="text-6xl">${avatarObj.emoji}</span>
+            </div>
+            
+            <h2 class="text-3xl sm:text-4xl font-black text-white mb-1">
+              HI, ${this.activeChild.name.toUpperCase()}! 🌟
+            </h2>
+            <p class="text-base text-pink-300 mb-8 font-outfit">Ready to become a Math Genius?</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <button onclick="window.app.selectLevel('EASY')" class="bg-gradient-to-b from-pink-500/30 to-purple-900/60 border-2 border-pink-400 p-6 rounded-3xl hover:scale-105 active:scale-95 transition text-center shadow-xl group">
+                <div class="text-5xl mb-3">🌸</div>
+                <h3 class="text-2xl font-black text-pink-300">EASY</h3>
+                <p class="text-xs text-purple-200 mt-1">Single Digit Math (0-9)</p>
+              </button>
+
+              <button onclick="window.app.selectLevel('MEDIUM')" class="bg-gradient-to-b from-purple-600/30 to-purple-900/60 border-2 border-purple-400 p-6 rounded-3xl hover:scale-105 active:scale-95 transition text-center shadow-xl group">
+                <div class="text-5xl mb-3">💜</div>
+                <h3 class="text-2xl font-black text-purple-300">MEDIUM</h3>
+                <p class="text-xs text-purple-200 mt-1">Double Digit Math (10-99)</p>
+              </button>
+
+              <button onclick="window.app.selectLevel('STRONG')" class="bg-gradient-to-b from-yellow-500/20 to-purple-900/60 border-2 border-yellow-400 p-6 rounded-3xl hover:scale-105 active:scale-95 transition text-center shadow-xl group">
+                <div class="text-5xl mb-3">👑</div>
+                <h3 class="text-2xl font-black text-yellow-300">STRONG</h3>
+                <p class="text-xs text-purple-200 mt-1">Triple Digit Math (100-999)</p>
+              </button>
+            </div>
+
+            <div class="mt-8 flex justify-center gap-4">
+              <button onclick="window.app.showParentDashboard()" class="px-4 py-2 bg-white/10 rounded-xl text-xs font-bold hover:bg-white/20">
+                ⬅️ Switch Child
+              </button>
+            </div>
+          </div>
+        `;
+        this.render(html);
+      }
+
+      selectLevel(level) {
+        this.currentLevel = level;
+        const html = `
+          <div class="w-full max-w-md text-center">
+            <h2 class="text-3xl font-black text-pink-300 mb-1">${level} MATH</h2>
+            <p class="text-xs text-purple-200 mb-6">CHOOSE YOUR MATH MODE</p>
+
+            <div class="space-y-4">
+              <button onclick="window.app.startMathSession('${level}', 'ADDITION')" class="w-full py-4 rounded-2xl bg-gradient-to-r from-pink-500 to-rose-500 font-extrabold text-xl shadow-lg hover:scale-105 transition flex items-center justify-center gap-3">
+                🩷 ADDITION (+)
+              </button>
+              <button onclick="window.app.startMathSession('${level}', 'SUBTRACTION')" class="w-full py-4 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 font-extrabold text-xl shadow-lg hover:scale-105 transition flex items-center justify-center gap-3">
+                💜 SUBTRACTION (−)
+              </button>
+              <button onclick="window.app.startMathSession('${level}', 'MIX')" class="w-full py-4 rounded-2xl bg-gradient-to-r from-fuchsia-600 to-pink-600 font-extrabold text-xl shadow-lg hover:scale-105 transition flex items-center justify-center gap-3">
+                💖 MIX (+ & −)
+              </button>
+            </div>
+
+            <button onclick="window.app.showChildHome()" class="mt-6 text-xs text-purple-300 underline">
+              ⬅️ Back to Level Selection
+            </button>
+          </div>
+        `;
+        this.render(html);
+      }
+
+      startMathSession(level, mode) {
+        this.currentLevel = level;
+        this.currentMode = mode;
+        this.askedQuestionIds.clear();
+        this.score = { correct: 0, wrong: 0, streak: 0 };
+        this.loadNextQuestion();
+      }
+
+      generateUniqueQuestion(level, mode) {
+        let op = mode;
+        if (mode === 'MIX') {
+          op = Math.random() > 0.5 ? 'ADDITION' : 'SUBTRACTION';
+        }
+
+        let num1 = 0, num2 = 0, ans = 0;
+        let attemptCount = 0;
+        let qId = "";
+
+        do {
+          attemptCount++;
+          if (level === 'EASY') {
+            num1 = Math.floor(Math.random() * 9) + 1;
+            num2 = Math.floor(Math.random() * 9) + 1;
+          } else if (level === 'MEDIUM') {
+            num1 = Math.floor(Math.random() * 89) + 10;
+            num2 = Math.floor(Math.random() * 89) + 10;
+          } else {
+            num1 = Math.floor(Math.random() * 899) + 100;
+            num2 = Math.floor(Math.random() * 899) + 100;
+          }
+
+          if (op === 'SUBTRACTION') {
+            if (num1 < num2) {
+              const temp = num1;
+              num1 = num2;
+              num2 = temp;
+            }
+            ans = num1 - num2;
+          } else {
+            ans = num1 + num2;
+          }
+
+          qId = `${op}_${num1}_${num2}`;
+        } while (this.askedQuestionIds.has(qId) && attemptCount < 100);
+
+        this.askedQuestionIds.add(qId);
+        return { num1, num2, operation: op, answer: ans, id: qId };
+      }
+
+      loadNextQuestion() {
+        this.currentQuestion = this.generateUniqueQuestion(this.currentLevel, this.currentMode);
+        this.currentInput = '';
+        this.isProcessingAnswer = false;
+        this.renderQuestionScreen();
+      }
+
+      renderQuestionScreen() {
+        const q = this.currentQuestion;
+        const symbol = q.operation === 'ADDITION' ? '+' : '−';
+        const avatarObj = CHARACTERS.find(c => c.id === this.activeChild.avatar) || CHARACTERS[0];
+
+        const html = `
+          <div class="w-full max-w-xl flex flex-col items-center">
+            
+            <div class="w-full bg-brandDarkPurple/80 border border-pink-500/30 p-4 rounded-2xl flex justify-between items-center mb-6 shadow-md">
+              <div class="flex items-center gap-3">
+                <span class="text-2xl">${avatarObj.emoji}</span>
+                <div>
+                  <h4 class="text-xs font-extrabold text-pink-300 uppercase tracking-wider">${this.currentLevel} MATH</h4>
+                  <p class="text-[10px] text-purple-200">Question #${this.askedQuestionIds.size}</p>
+                </div>
+              </div>
+
+              <div class="flex gap-4 text-xs font-bold">
+                <span class="text-green-400">✓ ${this.score.correct}</span>
+                <span class="text-red-400">✕ ${this.score.wrong}</span>
+                <span class="text-amber-300">🔥 ${this.score.streak}</span>
+              </div>
+            </div>
+
+            <div class="w-full bg-gradient-to-b from-purple-900/60 to-brandDarkPurple border-2 border-pink-500/40 p-8 rounded-3xl text-center shadow-2xl relative">
+              <div id="character-reaction" class="text-4xl mb-2 animate-bounce">
+                ${avatarObj.emoji}
+              </div>
+
+              <div class="text-4xl sm:text-6xl font-black tracking-wider text-white mb-6">
+                ${q.num1} ${symbol} ${q.num2} = ?
+              </div>
+
+              <div id="answer-box" class="w-48 mx-auto h-16 rounded-2xl bg-black/60 border-4 border-pink-400 flex items-center justify-center text-3xl font-black text-white transition-all shadow-inner">
+                ${this.currentInput || '<span class="text-gray-600 animate-pulse">?</span>'}
+              </div>
+
+              <div id="feedback-banner" class="h-6 mt-3 text-sm font-bold"></div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3 w-full max-w-xs mt-6">
+              ${[1,2,3,4,5,6,7,8,9].map(n => `
+                <button onclick="window.app.pressKey('${n}')" class="py-3 rounded-2xl bg-white/10 hover:bg-white/20 active:scale-90 text-2xl font-bold border border-white/10 shadow">
+                  ${n}
+                </button>
+              `).join('')}
+              <button onclick="window.app.pressKey('CLEAR')" class="py-3 rounded-2xl bg-red-500/20 hover:bg-red-500/30 active:scale-90 text-sm font-bold text-red-300 border border-red-500/30">
+                C
+              </button>
+              <button onclick="window.app.pressKey('0')" class="py-3 rounded-2xl bg-white/10 hover:bg-white/20 active:scale-90 text-2xl font-bold border border-white/10 shadow">
+                0
+              </button>
+              <button onclick="window.app.pressKey('BACKSPACE')" class="py-3 rounded-2xl bg-amber-500/20 hover:bg-amber-500/30 active:scale-90 text-xl font-bold text-amber-300 border border-amber-500/30">
+                ⌫
+              </button>
+            </div>
+
+            <button onclick="window.app.showChildHome()" class="mt-6 text-xs text-purple-300 underline">
+              Quit Session
+            </button>
+          </div>
+        `;
+        this.render(html);
+      }
+
+      pressKey(key) {
+        if (this.isProcessingAnswer) return;
+
+        if (key === 'CLEAR') {
+          this.currentInput = '';
+        } else if (key === 'BACKSPACE') {
+          this.currentInput = this.currentInput.slice(0, -1);
+        } else {
+          if (this.currentInput.length < 5) {
+            this.currentInput += key;
+          }
+        }
+
+        this.updateAnswerDisplay();
+
+        const targetLen = this.currentQuestion.answer.toString().length;
+        if (this.currentInput.length === targetLen) {
+          this.verifyAnswer();
+        }
+      }
+
+      updateAnswerDisplay() {
+        const box = document.getElementById('answer-box');
+        if (box) {
+          box.innerHTML = this.currentInput || '<span class="text-gray-600 animate-pulse">?</span>';
+        }
+      }
+
+      async verifyAnswer() {
+        this.isProcessingAnswer = true;
+        const userVal = parseInt(this.currentInput, 10);
+        const correctVal = this.currentQuestion.answer;
+        const box = document.getElementById('answer-box');
+        const feedback = document.getElementById('feedback-banner');
+
+        if (userVal === correctVal) {
+          box.className = "w-48 mx-auto h-16 rounded-2xl bg-green-500/30 border-4 border-green-400 flex items-center justify-center text-3xl font-black text-green-300 animate-bounce";
+          feedback.innerHTML = `<span class="text-green-400">✓ CORRECT! GREAT JOB!</span>`;
+          
+          audioSystem.playCorrect();
+          this.score.correct++;
+          this.score.streak++;
+
+          await this.updateChildProgressDB(true);
+
+          if (this.score.correct % 10 === 0) {
+            setTimeout(() => {
+              this.triggerMilestoneCelebration(this.score.correct);
+            }, 600);
+          } else {
+            setTimeout(() => {
+              this.loadNextQuestion();
+            }, 800);
+          }
+
+        } else {
+          box.className = "w-48 mx-auto h-16 rounded-2xl bg-red-500/30 border-4 border-red-500 flex items-center justify-center text-3xl font-black text-red-300 animate-shake";
+          feedback.innerHTML = `<span class="text-red-400">✕ TRY AGAIN! 💪</span>`;
+          
+          audioSystem.playWrong();
+          this.score.wrong++;
+          this.score.streak = 0;
+
+          await this.updateChildProgressDB(false);
+
+          setTimeout(() => {
+            this.currentInput = '';
+            box.className = "w-48 mx-auto h-16 rounded-2xl bg-black/60 border-4 border-pink-400 flex items-center justify-center text-3xl font-black text-white";
+            this.updateAnswerDisplay();
+            this.isProcessingAnswer = false;
+          }, 1200);
+        }
+      }
+
+      async updateChildProgressDB(isCorrect) {
+        if (!this.currentUser || !this.activeChild) return;
+        
+        const cRef = ref(db, `parents/${this.currentUser.uid}/children/${this.activeChild.childId}`);
+        const newCorrect = (this.activeChild.totalCorrect || 0) + (isCorrect ? 1 : 0);
+        const newWrong = (this.activeChild.totalWrong || 0) + (isCorrect ? 0 : 1);
+        const newTotal = (this.activeChild.totalQuestions || 0) + 1;
+
+        this.activeChild.totalCorrect = newCorrect;
+        this.activeChild.totalWrong = newWrong;
+        this.activeChild.totalQuestions = newTotal;
+
+        await update(cRef, {
+          totalCorrect: newCorrect,
+          totalWrong: newWrong,
+          totalQuestions: newTotal,
+          lastActive: new Date().toISOString()
+        });
+      }
+
+      triggerMilestoneCelebration(count) {
+        let title = "GOOD JOB! 🎉";
+        if (count >= 50) title = "VERY GENIUS KIDS!! 🏆";
+        else if (count >= 40) title = "YOU ARE SUPERB! 👑";
+        else if (count >= 30) title = "EXCELLENT! 💖";
+        else if (count >= 20) title = "AWESOME! 🌟";
+
+        document.getElementById('modal-title').innerText = title;
+        document.getElementById('modal-subtitle').innerText = `You completed ${count} correct answers!`;
+        document.getElementById('milestone-modal').classList.remove('hidden');
+
+        audioSystem.playMilestoneSound();
+
+        if (window.confetti) {
+          confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 }
+          });
+        }
+      }
+
+      closeMilestoneModal() {
+        document.getElementById('milestone-modal').classList.add('hidden');
+        this.loadNextQuestion();
+      }
+
+      showParentProgress(childId) {
+        const child = this.childrenProfiles.find(c => c.childId === childId);
+        if (!child) return;
+
+        const accuracy = child.totalQuestions ? Math.round((child.totalCorrect / child.totalQuestions) * 100) : 0;
+
+        const html = `
+          <div class="w-full max-w-2xl bg-brandDarkPurple/90 border border-pink-500/40 p-6 rounded-3xl shadow-2xl">
+            <h2 class="text-2xl font-black text-pink-300 text-center mb-1">${child.name.toUpperCase()}'S MATH PROGRESS</h2>
+            <p class="text-xs text-purple-200 text-center mb-6">Parent Real-time Analytics Dashboard</p>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6 text-center">
+              <div class="bg-white/5 p-3 rounded-2xl border border-white/10">
+                <span class="text-xs text-purple-300 block">Total Questions</span>
+                <span class="text-xl font-bold text-white">${child.totalQuestions || 0}</span>
+              </div>
+              <div class="bg-white/5 p-3 rounded-2xl border border-white/10">
+                <span class="text-xs text-green-300 block">Correct</span>
+                <span class="text-xl font-bold text-green-400">${child.totalCorrect || 0}</span>
+              </div>
+              <div class="bg-white/5 p-3 rounded-2xl border border-white/10">
+                <span class="text-xs text-red-300 block">Wrong</span>
+                <span class="text-xl font-bold text-red-400">${child.totalWrong || 0}</span>
+              </div>
+              <div class="bg-white/5 p-3 rounded-2xl border border-white/10">
+                <span class="text-xs text-pink-300 block">Accuracy</span>
+                <span class="text-xl font-bold text-pink-300">${accuracy}%</span>
+              </div>
+            </div>
+
+            <h3 class="text-sm font-bold text-white mb-2">🏅 UNLOCKED ACHIEVEMENTS</h3>
+            <div class="grid grid-cols-3 gap-2 mb-6">
+              <div class="p-3 rounded-xl bg-purple-900/40 border border-pink-500/30 text-center">
+                <span class="text-2xl block">🏅</span>
+                <span class="text-[10px] font-bold text-purple-200">Math Starter (10+)</span>
+              </div>
+              <div class="p-3 rounded-xl bg-purple-900/40 border ${child.totalCorrect >= 50 ? 'border-amber-400' : 'border-gray-700 opacity-40'} text-center">
+                <span class="text-2xl block">🏆</span>
+                <span class="text-[10px] font-bold text-purple-200">Genius Kid (50+)</span>
+              </div>
+              <div class="p-3 rounded-xl bg-purple-900/40 border ${child.totalCorrect >= 100 ? 'border-amber-400' : 'border-gray-700 opacity-40'} text-center">
+                <span class="text-2xl block">👑</span>
+                <span class="text-[10px] font-bold text-purple-200">Math Star (100+)</span>
+              </div>
+            </div>
+
+            <button onclick="window.app.showParentDashboard()" class="w-full py-3 bg-pink-600 rounded-xl font-bold text-sm">
+              BACK TO DASHBOARD 🌸
+            </button>
+          </div>
+        `;
+        this.render(html);
+      }
+
+      showParentSettings() {
+        const html = `
+          <div class="max-w-md w-full bg-brandDarkPurple border border-purple-500/40 p-6 rounded-3xl shadow-2xl">
+            <h3 class="text-2xl font-black text-pink-300 text-center mb-4">PARENT SETTINGS ⚙️</h3>
+
+            <div class="space-y-4">
+              <div class="bg-white/5 p-4 rounded-2xl border border-white/10">
+                <label class="block text-xs font-bold text-purple-300 mb-2">CHANGE PARENT QUICK ACCESS PIN</label>
+                <div class="flex gap-2">
+                  <input type="password" id="new-pin-input" maxlength="4" placeholder="New 4-digit PIN" class="px-3 py-2 bg-black/50 border border-purple-400 rounded-xl text-xs w-full">
+                  <button onclick="window.app.changePin()" class="px-4 py-2 bg-pink-500 rounded-xl text-xs font-bold whitespace-nowrap">UPDATE PIN</button>
+                </div>
+              </div>
+
+              <button onclick="window.app.logoutParent()" class="w-full py-3 bg-red-600/80 hover:bg-red-600 rounded-xl font-bold text-sm transition">
+                LOG OUT ACCIDENTALLY / EXIT SESSION 🚪
+              </button>
+
+              <button onclick="window.app.showParentDashboard()" class="w-full py-3 bg-white/10 rounded-xl font-bold text-xs">
+                CLOSE SETTINGS
+              </button>
+            </div>
+          </div>
+        `;
+        this.render(html);
+      }
+
+      async changePin() {
+        const val = document.getElementById('new-pin-input').value.trim();
+        if (val.length === 4 && !isNaN(val)) {
+          await update(ref(db, `parents/${this.currentUser.uid}/profile`), { pin: val });
+          alert("Parent Quick Access PIN berjaya dikemas kini!");
+          this.showParentDashboard();
+        } else {
+          alert("Sila masukkan 4 digit nombor sah.");
+        }
+      }
+
+      async logoutParent() {
+        if (this.currentUser) {
+          localStorage.removeItem(`auth_device_${this.currentUser.uid}`);
+          await signOut(auth);
+        }
+        this.activeChild = null;
+        this.showWelcomeScreen();
+      }
+    }
+
+    // Initialize globally
+    window.app = new AmandaMathApp();
+    window.app.init();
+  </script>
+</body>
+</html>
